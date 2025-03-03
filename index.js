@@ -8,7 +8,7 @@ app.use(express.static(path.join(__dirname, 'url')));
 app.use(express.static(path.join(__dirname, 'url', 'login')));
 app.use(express.static(path.join(__dirname, 'url', 'callback')));
 
-app.get('/', (req, res) {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'url', 'login', 'index.html'));
 });
 
