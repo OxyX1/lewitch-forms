@@ -4,10 +4,16 @@ services:
     env: node
     plan: starter
     build:
-      dockerfilePath: Dockerfile
+      dockerfilePath: Dockerfile  # Optional if you're using Docker
     start:
-      command: npm start
+      command: node index.js  # Command to start your app
     routes:
       - path: /
+        type: static
+        service: oxyum-social
+      - path: /url/callback
+        type: static
+        service: oxyum-social
+      - path: /url/login
         type: static
         service: oxyum-social
