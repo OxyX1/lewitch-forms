@@ -29,11 +29,10 @@ function executeOSFL(script) {
         if (command.startsWith('write(')) {
             const message = command.slice(6, -2);
             result += message + '\n';
-        } else if (command.startsWith('changeColor(')) {
+        } else if (command.startsWith('http(')) {
             const color = command.slice(12, -2);
             result += `Changed color to: ${color}\n`;
         }
-        // Add more commands as needed
     });
     return result;
 }
