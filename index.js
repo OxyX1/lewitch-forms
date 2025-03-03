@@ -9,7 +9,7 @@ app.use(express.static(path.join(__dirname, 'url', 'login')));
 app.use(express.static(path.join(__dirname, 'url', 'callback')));
 
 app.get('/authentication', (req, res) => {
-    res.sendFile(path.join(__dirname, 'url', 'login', 'index.html'))
+    res.sendFile(path.join(__dirname, 'url', 'login', 'index.html'));
 });
 
 app.get('/callback', (req, res) => {
@@ -17,7 +17,7 @@ app.get('/callback', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    res.sendFile(path.join(__dirname, 'url', 'logout', 'index.html'))
+    res.sendFile(path.join(__dirname, 'url', 'logout', 'index.html'));
 });
 
 
