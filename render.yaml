@@ -1,0 +1,13 @@
+services:
+  - name: oxyum-social
+    type: web
+    env: node
+    plan: starter
+    build:
+      dockerfilePath: Dockerfile
+    start:
+      command: npm start
+    routes:
+      - path: /
+        type: static
+        service: oxyum-social
