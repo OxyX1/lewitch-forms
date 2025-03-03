@@ -1,44 +1,43 @@
 const express = require('express');
-const http = require('http');
-const path = require('path');
-
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, 'url')));
-app.use(express.static(path.join(__dirname, 'url', 'login')));
-app.use(express.static(path.join(__dirname, 'url', 'callback')));
+app.use(express.json());
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'url', 'login', 'index.html'));
+app.post('/api/execute', (req, res) => {
+    const { script } = req.body;
+
+    if (!script) {
+        return res.status(400).json({ error: 'No script provided' });
+    }
+
+    try {
+        const result = executeOSFL(script);
+        res.json({ message: 'Script executed successfully', result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-app.get('/authentication', (req, res) => {
-    res.sendFile(path.join(__dirname, 'url', 'login', 'index.html'));
+// Function to interpret and execute .osfl commands
+function executeOSFL(script) {
+    let result = '';
+    const commands = script.split('\n');
+
+    commands.forEach(command => {
+        command = command.trim();
+        if (command.startsWith('write(')) {
+            const message = command.slice(6, -2);
+            result += message + '\n';
+        } else if (command.startsWith('changeColor(')) {
+            const color = command.slice(12, -2);
+            result += `Changed color to: ${color}\n`;
+        }
+        // Add more commands as needed
+    });
+    return result;
+}
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
-
-app.get('/callback', (req, res) => {
-    res.sendFile(path.join(__dirname, 'url', 'callback', 'index.html'));
-});
-
-app.get('/logout', (req, res) => {
-    res.sendFile(path.join(__dirname, 'url', 'logout', 'index.html'));
-});
-
-
-
-/*
-
-ideas and thoughts:
-
-use the oxyum server to handle local javascript files.
-
-create a hosting app for advanced web handling.
-
-finish credidential system.
-
-add server creating and joining functions.
-
-add personal dm functions for private conversations.
-
-
-*/
