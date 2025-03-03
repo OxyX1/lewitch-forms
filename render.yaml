@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: oxyum-social
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    branch: main
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
+    autoDeploy: true
+    git:
+      repo: https://github.com/username/oxyum-social
+      branch: main
+    instances: 1
+    region: oregon
