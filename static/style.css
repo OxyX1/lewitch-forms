@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+#chat-box {
+    width: 100vw;
+    height: 95vh;
+}
+
+#message {
+    width: 95vw;
+    height: 30px;
+}
