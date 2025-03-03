@@ -19,3 +19,22 @@ app.get('/callback', (req, res) => {
 app.get('/logout', (req, res) => {
     res.sendFile(path.join(__dirname, 'url', 'logout', 'index.html'))
 });
+
+
+
+/*
+
+ideas and thoughts:
+
+use the oxyum server to handle local javascript files.
+
+create a hosting app for advanced web handling.
+
+finish credidential system.
+
+add server creating and joining functions.
+
+add personal dm functions for private conversations.
+
+
+*/
