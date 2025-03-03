@@ -14,5 +14,5 @@ services:
     git:
       repo: https://github.com/OxyX1/lewitch-forms.git
       branch: main
-    instances: 1
+    #instances: 1
     region: oregon
