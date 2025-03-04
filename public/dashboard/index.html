@@ -5,31 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <script src="https://cdn.auth0.com/js/auth0/9.19/auth0.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-            padding: 50px;
-            display: none; /* Hide content until authentication check */
-        }
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .logout {
-            background: #dc3545;
-            color: white;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@main/oxy.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@3a324169cae2d1506e174dd1a96efe79fd7c9302/oxyum.css">
 </head>
 <body>
-
-    <h1>Welcome to the Dashboard</h1>
+    <h1>Welcome to the Oxyum dashboard</h1>
     <p id="user-info">Checking authentication...</p>
     <button class="logout" onclick="logout()">Logout</button>
 
@@ -59,7 +39,7 @@
         }
 
         function showDashboard(authResult) {
-            document.body.style.display = "block"; // Show dashboard
+            document.body.style.display = "block";
             if (authResult && authResult.idTokenPayload) {
                 document.getElementById("user-info").innerText = `Logged in as: ${authResult.idTokenPayload.name}`;
             } else {
