@@ -11,8 +11,11 @@
 </head>
 <body>
     <div class="chatbox">
-        <input type="text" placeholder="Type a message...">
+        <div id="messages"></div> <!-- Message display area -->
+        <input type="text" id="chat-input" placeholder="Type a message...">
+        <button id="send-btn">Send</button>
     </div>
+    
     
     <div class="sidebar">
         <button class="logout" onclick="logout()">Logout</button>

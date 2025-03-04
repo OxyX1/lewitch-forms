@@ -28,15 +28,33 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
+const users = {}; // Store connected users
 
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
+io.on('connection', (socket) => {
+    console.log(`User connected: ${socket.id}`);
+
+    // When a new user joins
+    socket.on('user join', (username) => {
+        users[socket.id] = username;
+        io.emit('chat message', { user: 'System', message: `${username} has joined the chat!` });
+        io.emit('update users', Object.values(users)); // Send updated user list
     });
 
+    // Receiving and broadcasting messages
+    socket.on('chat message', (msg) => {
+        const user = users[socket.id] || 'Anonymous';
+        io.emit('chat message', { user, message: msg });
+    });
+
+    // When a user disconnects
     socket.on('disconnect', () => {
-        console.log('A user disconnected:', socket.id);
+        const username = users[socket.id];
+        if (username) {
+            io.emit('chat message', { user: 'System', message: `${username} has left the chat.` });
+        }
+        delete users[socket.id];
+        io.emit('update users', Object.values(users));
+        console.log(`User disconnected: ${socket.id}`);
     });
 });
 
