@@ -11,26 +11,25 @@
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <input type="text" id="serverName" placeholder="Create a server">
+        <aside class="sidebar">
+            <input id="serverName" placeholder="Create a server">
             <button onclick="createServer()">Create</button>
             <ul id="serverList"></ul>
             <button class="logout" onclick="logout()">Logout</button>
-        </div>
+        </aside>
 
-        <div class="main">
-            <div class="topbar">
+        <main class="chat">
+            <header class="topbar">
                 <p id="user-info">Checking authentication...</p>
-            </div>
+            </header>
 
-            <div class="chat-container">
-                <div class="chatbox" id="chatbox"></div>
-                <div class="input-area">
-                    <input type="text" id="messageInput" placeholder="Type a message...">
-                    <button onclick="sendMessage()">Send</button>
-                </div>
-            </div>
-        </div>
+            <section class="chatbox" id="chatbox"></section>
+
+            <footer class="input-area">
+                <input id="messageInput" placeholder="Type a message...">
+                <button onclick="sendMessage()">Send</button>
+            </footer>
+        </main>
     </div>
 
     <script src="script.js"></script>
