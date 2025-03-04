@@ -38,5 +38,25 @@
             }
         }
     </script>
+    <script>
+        const auth0Client = new auth0.WebAuth({
+            domain: "dev-yvvarvk8mw7tss4s.us.auth0.com",
+            clientID: "KqYsGP1tFGpW1AoZNxinyFDUPXWnzQ57",
+            responseType: "token id_token",
+            scope: "openid profile email",
+            redirectUri: window.location.origin
+        });
+    
+        function checkAuth() {
+            auth0Client.checkSession({}, function(err, authResult) {
+                if (err || !authResult || !authResult.idToken) {
+                    window.close();
+                }
+            });
+        }
+    
+        checkAuth();
+    </script>
+    
 </body>
 </html>
