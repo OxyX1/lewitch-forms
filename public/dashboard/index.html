@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat { width: 300px; height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; }
+        input { width: 80%; padding: 5px; }
+        button { padding: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Chat App</h2>
+    <div id="chat"></div>
+    <input id="message" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = io();
+
+        socket.on('chat message', (msg) => {
+            const chat = document.getElementById('chat');
+            const messageElement = document.createElement('p');
+            messageElement.textContent = msg;
+            chat.appendChild(messageElement);
+            chat.scrollTop = chat.scrollHeight; // Auto-scroll to the latest message
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('message');
+            const msg = input.value;
+            if (msg.trim() !== '') {
+                socket.emit('chat message', msg);
+                input.value = ''; // Clear input
+            }
+        }
+    </script>
+</body>
+</html>
