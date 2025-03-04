@@ -9,9 +9,9 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #1c1c1c;
+            background-color: #f4f4f4;
             padding: 50px;
-            display: none; /* Hide content until authentication check is complete */
+            display: none; /* Hide content until authentication check */
         }
         button {
             padding: 10px 15px;
@@ -30,35 +30,49 @@
 <body>
 
     <h1>Welcome to the Dashboard</h1>
-    <p>You are logged in!</p>
+    <p id="user-info">Checking authentication...</p>
     <button class="logout" onclick="logout()">Logout</button>
 
     <script>
         const auth0Client = new auth0.WebAuth({
             domain: "dev-yvvarvk8mw7tss4s.us.auth0.com",
             clientID: "KqYsGP1tFGpW1AoZNxinyFDUPXWnzQ57",
-            redirectUri: 'http://shinkansen.proxy.rlwy.net:43606/', // Redirect to login page if not logged in
+            redirectUri: "http://shinkansen.proxy.rlwy.net:43606/dashboard/",
             responseType: "token id_token",
             scope: "openid profile email"
         });
 
         function checkAuth() {
-            auth0Client.checkSession({}, function(err, authResult) {
-                if (err || !authResult || !authResult.idToken) {
-                    window.location.href = "http://shinkansen.proxy.rlwy.net:43606/"; // Redirect to login page
+            auth0Client.parseHash((err, authResult) => {
+                if (authResult && authResult.idToken) {
+                    localStorage.setItem("id_token", authResult.idToken);
+                    showDashboard(authResult);
                 } else {
-                    document.body.style.display = "block"; // Show dashboard after authentication check
+                    const storedToken = localStorage.getItem("id_token");
+                    if (!storedToken) {
+                        window.location.href = "http://shinkansen.proxy.rlwy.net:43606/";
+                    } else {
+                        showDashboard();
+                    }
                 }
             });
         }
 
+        function showDashboard(authResult) {
+            document.body.style.display = "block"; // Show dashboard
+            if (authResult && authResult.idTokenPayload) {
+                document.getElementById("user-info").innerText = `Logged in as: ${authResult.idTokenPayload.name}`;
+            } else {
+                document.getElementById("user-info").innerText = "You are logged in.";
+            }
+        }
+
         function logout() {
+            localStorage.removeItem("id_token");
             auth0Client.logout({
-                returnTo: "http://shinkansen.proxy.rlwy.net:43606/", // Redirect to login page after logout
+                returnTo: "http://shinkansen.proxy.rlwy.net:43606/",
                 clientID: "KqYsGP1tFGpW1AoZNxinyFDUPXWnzQ57"
             });
-            sessionStorage.clear();
-            localStorage.clear();
         }
 
         // Run authentication check when the page loads
