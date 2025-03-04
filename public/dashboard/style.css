@@ -1,107 +1,104 @@
-body, html {
-    height: 100%;
-    width: 100%;
-    margin: 0;
+body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    height: 100vh;
   }
   
   .app {
     display: flex;
-    height: 100vh;
-    width: 100vw;
+    width: 100%;
   }
   
-  .main-left {
-    width: 30%;
-    background: #f4f4f4;
+  /* Sidebar */
+  .sidebar {
+    width: 25%;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+  }
+  
+  .sidebar h3 {
+    margin-bottom: 20px;
+  }
+  
+  .sidebar button {
+    width: 90%;
+    margin: 5px 0;
     padding: 10px;
+    border: none;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
   }
   
-  .main-right {
-    width: 70%;
+  #server-list {
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .server-btn {
+    width: 90%;
+    padding: 10px;
+    margin: 5px 0;
+    background: #1abc9c;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Chat Section */
+  .chat-container {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    background: #fff;
+    padding: 20px;
   }
   
-  .chat-area {
+  #chat-area {
     flex-grow: 1;
     overflow-y: auto;
+    border: 1px solid #ccc;
     padding: 10px;
-    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
   }
   
-  .typing-area {
+  .message-input {
     display: flex;
-    padding: 10px;
-    background: #eee;
   }
   
-  .type-area {
+  .message-input input {
     flex-grow: 1;
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #ccc;
   }
   
-  .send-btn {
-    cursor: pointer;
-    padding: 8px;
-    margin-left: 10px;
-  }
-  
-  .server-actions {
-    text-align: center;
+  .message-input button {
     padding: 10px;
-  }
-  
-  .server-actions .btn {
-    margin: 5px;
-    width: 90%;
-  }
-  
-  .server-list {
-    padding: 10px;
-    background: #f3f3f3;
-    min-height: 50px;
-    max-height: 200px;
-    overflow-y: auto;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .server-item {
-    padding: 8px;
-    background: #ddd;
-    margin: 5px 0;
+    border: none;
+    background: #3498db;
+    color: white;
     cursor: pointer;
-    border-radius: 5px;
   }
   
-  .server-item:hover {
-    background: #bbb;
-  }
-  
-  /* Modal Styling */
+  /* Modal */
   .modal {
     display: none;
     position: fixed;
-    left: 50%;
     top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     background: white;
     padding: 20px;
+    border: 1px solid #ccc;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
-  }
-  
-  .modal-content {
-    text-align: center;
   }
   
   .close {
     float: right;
-    font-size: 24px;
     cursor: pointer;
   }
   

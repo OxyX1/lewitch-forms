@@ -3,8 +3,9 @@ const socket = new WebSocket("ws://localhost:8080");
 const usernameDisplay = document.getElementById("username-display");
 const serverList = document.getElementById("server-list");
 const chatArea = document.getElementById("chat-area");
-const typeArea = document.getElementById("type-area");
-const sendBtn = document.querySelector(".send-btn");
+const messageBox = document.getElementById("message-box");
+const sendBtn = document.getElementById("send-btn");
+const serverTitle = document.getElementById("server-title");
 
 const modal = document.getElementById("server-modal");
 const modalTitle = document.getElementById("modal-title");
@@ -47,7 +48,7 @@ function addMessage(text, sender = "self") {
 }
 
 sendBtn.addEventListener("click", () => sendMessage());
-typeArea.addEventListener("keypress", (e) => {
+messageBox.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
         e.preventDefault();
         sendMessage();
@@ -55,7 +56,7 @@ typeArea.addEventListener("keypress", (e) => {
 });
 
 function sendMessage() {
-    const messageText = typeArea.value;
+    const messageText = messageBox.value;
     if (!messageText.trim() || !currentServer) return;
 
     socket.send(JSON.stringify({
@@ -63,7 +64,7 @@ function sendMessage() {
         data: { user: userID, message: messageText }
     }));
 
-    typeArea.value = "";
+    messageBox.value = "";
 }
 
 document.getElementById("create-server-btn").addEventListener("click", () => openModal("Create Server"));
@@ -92,5 +93,15 @@ function createServer(serverName) {
 
 function joinServer(serverName) {
     currentServer = serverName;
+    serverTitle.innerText = `Server: ${serverName}`;
     socket.send(JSON.stringify({ type: "join server", data: { serverName } }));
+    addServerToSidebar(serverName);
+}
+
+function addServerToSidebar(serverName) {
+    const serverBtn = document.createElement("button");
+    serverBtn.innerText = serverName;
+    serverBtn.classList.add("server-btn");
+    serverBtn.addEventListener("click", () => joinServer(serverName));
+    serverList.appendChild(serverBtn);
 }

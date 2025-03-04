@@ -3,63 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Chat App</title>
-  <link rel="stylesheet" href="bootstrap3.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app" class="app">
-    <!-- LEFT SECTION -->
-    <section id="main-left" class="main-left">
-      <div id="header-left" class="header-left">
-        <span class="glyphicon glyphicon-menu-hamburger hamburger-btn"></span>
-        <span class="glyphicon glyphicon-search search-btn"></span>
-        <span class="glyphicon glyphicon-option-vertical option-btn"></span>
-      </div>
+  <div class="app">
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+      <h3 id="username-display">Your Name</h3>
+      <button id="create-server-btn">Create Server</button>
+      <button id="join-server-btn">Join Server</button>
+      <div id="server-list"></div>
+    </div>
 
-      <!-- User Info & Server Buttons -->
-      <div id="self-info" class="self-info">
-        <h4 id="username-display" class="name your-name">Your Name</h4>
-        <span class="glyphicon glyphicon-cog"></span>
+    <!-- CHAT SECTION -->
+    <div class="chat-container">
+      <h3 id="server-title">Select a Server</h3>
+      <div id="chat-area"></div>
+      <div class="message-input">
+        <input id="message-box" type="text" placeholder="Type a message...">
+        <button id="send-btn">Send</button>
       </div>
-
-      <div class="server-actions">
-        <button id="create-server-btn" class="btn btn-primary">Create Server</button>
-        <button id="join-server-btn" class="btn btn-secondary">Join Server</button>
-      </div>
-
-      <!-- Server List -->
-      <div id="server-list" class="server-list"></div>
-
-      <div id="chat-list" class="chat-list"></div>
-    </section>
-
-    <!-- RIGHT SECTION -->
-    <section id="main-right" class="main-right">
-      <div id="header-right" class="header-right">
-        <h4 class="name friend-name">Chat</h4>
-      </div>
-      <div id="chat-area" class="chat-area"></div>
-      <div id="typing-area" class="typing-area">
-        <input id="type-area" class="type-area" placeholder="Type something...">
-        <span class="glyphicon glyphicon-send send-btn"></span>
-      </div>
-    </section>
+    </div>
   </div>
 
-  <!-- Server Input Modal -->
+  <!-- MODAL POPUP -->
   <div id="server-modal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
       <h3 id="modal-title">Enter Server Name</h3>
-      <input type="text" id="server-input" placeholder="Server Name">
-      <button id="server-submit" class="btn btn-success">Submit</button>
+      <input type="text" id="server-input">
+      <button id="server-submit">Submit</button>
     </div>
   </div>
 
-  <script src="bootstrap3.3/js/jquery-3.3.1.min.js"></script>
-  <script src="bootstrap3.3/js/bootstrap.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
