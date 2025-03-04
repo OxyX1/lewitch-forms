@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "install": "npm install express http path socket.io web-push node-pushnotifications crypto bcryptjs jsonwebtoken sqlite3 cookie-parser uuid",
+        "install": "npm install express http path socket.io uuid ws",
         "start": "node index.js"
     }
 }
