@@ -1,73 +1,102 @@
- /* Chat bubble styling */
- .chat-container {
+/* Chat bubble styling */
+.chat-container {
     display: flex;
     flex-direction: column;
     height: 97vh;
-  }
-  
-  .messages-container {
+ }
+ 
+ .input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+ }
+ 
+ .input-container input {
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+ }
+ 
+ .input-container button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+ }
+ 
+ .messages-container {
     flex-grow: 1;
     overflow-y: auto;
-  }
-  
-  .message-container {
+    padding: 10px;
+ }
+ 
+ .message-container {
     display: flex;
     align-items: flex-start;
-    margin: 10px;
-  }
-  
-  .message-bubble {
+    margin: 10px 0;
+ }
+ 
+ .message-bubble {
     background-color: #f8f9fa;
     padding: 10px 16px;
-    border-radius: 50px;
+    border-radius: 20px;
     max-width: 60%;
     word-wrap: break-word;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
-  }
-  
-  .sender-message-container {
+ }
+ 
+ .sender-message-container {
     justify-content: flex-end;
-  }
-  
-  .sender-message-bubble {
+ }
+ 
+ .sender-message-bubble {
     background-color: #007bff;
     color: white;
-  }
-  
-  .message-input-container {
+ }
+ 
+ .message-input-container {
     display: flex;
     align-items: center;
     padding: 10px;
     background-color: white;
-  }
-  
-  #messageInput {
+    border-top: 1px solid #ddd;
+ }
+ 
+ #messageInput {
     flex-grow: 1;
     margin-right: 6px;
     border: none;
     outline: none;
-    border-radius: 50px;
+    border-radius: 20px;
     height: 30px;
     font-size: 16px;
     background-color: #f8f9fa;
-    padding: 10px 16px 10px 16px;
-  }
-  
-  #sendButton {
+    padding: 10px 16px;
+ }
+ 
+ #sendButton {
     background-color: #007bff;
-    border-radius: 50px;
+    border-radius: 20px;
     outline: none;
     border: none;
-    padding: 14px 16px 14px 16px;
+    padding: 10px 16px;
     color: #fff;
     font-size: 16px;
     cursor: pointer;
-  }
-  
-  #sendButton:hover{
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
-  }
-  
-  #sendButton:active {
-    background-color: #3b9aff;
-  }
+ }
+ 
+ #sendButton:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+ }
+ 
+ #sendButton:active {
+    background-color: #0056b3;
+ }
+ 
