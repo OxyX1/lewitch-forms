@@ -27,12 +27,18 @@ socket.addEventListener("message", (event) => {
 
     switch (type) {
         case "chat message":
-            addMessage(message, user);
+            if (serverName === currentServer) {
+                addMessage(message, user);
+            }
             break;
+
         case "server messages":
-            chatArea.innerHTML = "";
-            messages.forEach(msg => addMessage(msg.message, msg.user));
+            if (serverName === currentServer) {
+                chatArea.innerHTML = "";
+                messages.forEach(msg => addMessage(msg.message, msg.user));
+            }
             break;
+
         case "server created":
             addServerToSidebar(serverName);
             break;
@@ -56,12 +62,12 @@ messageBox.addEventListener("keypress", (e) => {
 });
 
 function sendMessage() {
-    const messageText = messageBox.value;
-    if (!messageText.trim() || !currentServer) return;
+    const messageText = messageBox.value.trim();
+    if (!messageText || !currentServer) return;
 
     socket.send(JSON.stringify({
         type: "chat message",
-        data: { user: userID, message: messageText }
+        data: { serverName: currentServer, user: userID, message: messageText }
     }));
 
     messageBox.value = "";
@@ -92,16 +98,25 @@ function createServer(serverName) {
 }
 
 function joinServer(serverName) {
+    if (!serverName) return;
+
     currentServer = serverName;
     serverTitle.innerText = `Server: ${serverName}`;
     socket.send(JSON.stringify({ type: "join server", data: { serverName } }));
-    addServerToSidebar(serverName);
+
+    // Prevent duplicate buttons
+    if (!document.getElementById(`server-btn-${serverName}`)) {
+        addServerToSidebar(serverName);
+    }
 }
 
 function addServerToSidebar(serverName) {
+    if (document.getElementById(`server-btn-${serverName}`)) return; // Prevent duplicate buttons
+
     const serverBtn = document.createElement("button");
     serverBtn.innerText = serverName;
     serverBtn.classList.add("server-btn");
+    serverBtn.id = `server-btn-${serverName}`;
     serverBtn.addEventListener("click", () => joinServer(serverName));
     serverList.appendChild(serverBtn);
 }
