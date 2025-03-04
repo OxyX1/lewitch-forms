@@ -4,29 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <script src="https://cdn.auth0.com/js/auth0/9.19/auth0.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@main/oxy.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@3a324169cae2d1506e174dd1a96efe79fd7c9302/oxyum.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="chatbox">
-        <div id="messages"></div>
-        <input type="text" id="chat-input" placeholder="Type a message...">
-        <button id="send-btn">Send</button>
-    </div>
-    
-    
     <div class="sidebar">
+        <input type="text" id="serverName" placeholder="Create a server">
+        <button onclick="createServer()">Create</button>
+        <ul id="serverList"></ul>
         <button class="logout" onclick="logout()">Logout</button>
     </div>
-    
+
     <div class="topbar">
         <p id="user-info">Checking authentication...</p>
     </div>
-    
-    <script src="script.js"></script>
-    <script src="0Auth.js"></script>
 
+    <div class="chatbox" id="chatbox"></div>
+
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script src="script.js"></script>
 </body>
 </html>

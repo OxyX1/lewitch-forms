@@ -1,35 +1,48 @@
-const socket = io(); // Connect to server
+const socket = io();
+let currentServer = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    const chatInput = document.getElementById("chat-input");
-    const sendBtn = document.getElementById("send-btn");
-    const messagesDiv = document.getElementById("messages");
-
-    let username = localStorage.getItem("username") || prompt("Enter your username:");
-    localStorage.setItem("username", username);
-    socket.emit("user join", username);
-
-    // Send message when clicking the button
-    sendBtn.addEventListener("click", sendMessage);
-
-    // Send message when pressing Enter
-    chatInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage();
-    });
-
-    function sendMessage() {
-        const message = chatInput.value.trim();
-        if (message !== "") {
-            socket.emit("chat message", { user: username, message });
-            chatInput.value = ""; // Clear input
-        }
+function createServer() {
+    const serverName = document.getElementById("serverName").value.trim();
+    if (serverName) {
+        socket.emit("create server", serverName);
+        document.getElementById("serverName").value = "";
     }
+}
 
-    // Receive messages
-    socket.on("chat message", (data) => {
-        const msgElement = document.createElement("p");
-        msgElement.innerHTML = `<strong>${data.user}:</strong> ${data.message}`;
-        messagesDiv.appendChild(msgElement);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to latest message
-    });
+socket.on("server created", (serverName) => {
+    const serverList = document.getElementById("serverList");
+    const li = document.createElement("li");
+    li.textContent = serverName;
+    li.onclick = () => joinServer(serverName);
+    serverList.appendChild(li);
 });
+
+function joinServer(serverName) {
+    currentServer = serverName;
+    document.getElementById("chatbox").innerHTML = "";
+    socket.emit("join server", serverName);
+}
+
+socket.on("server messages", (messages) => {
+    messages.forEach(({ user, message }) => addMessage(user, message));
+});
+
+function sendMessage() {
+    const messageInput = document.getElementById("messageInput");
+    const message = messageInput.value.trim();
+    if (message && currentServer) {
+        socket.emit("chat message", { server: currentServer, user: "You", message });
+        messageInput.value = "";
+    }
+}
+
+socket.on("chat message", ({ user, message }) => {
+    addMessage(user, message);
+});
+
+function addMessage(user, message) {
+    const chatbox = document.getElementById("chatbox");
+    const msgDiv = document.createElement("div");
+    msgDiv.textContent = `${user}: ${message}`;
+    chatbox.appendChild(msgDiv);
+}

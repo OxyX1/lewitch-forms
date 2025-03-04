@@ -1,7 +1,7 @@
-const express = require("express");
-const http = require("http");
-const path = require("path");
-const socketIo = require("socket.io");
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const socketIo = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
@@ -14,44 +14,52 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 8080;
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "login", "index.html"));
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login', 'index.html'));
 });
 
-app.get("/dashboard", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "dashboard", "index.html"));
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
 });
 
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+const servers = {}; // Store servers and their messages
 const users = {}; // Store connected users
 
 io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    socket.on("user join", (username) => {
-        users[socket.id] = username;
-        io.emit("chat message", { user: "System", message: `${username} has joined the chat.` });
-        io.emit("update users", Object.values(users));
-        console.log(`${username} joined the chat.`);
-    });
-
-    socket.on("chat message", (data) => {
-        io.emit("chat message", data); // Broadcast message
-    });
-
-    socket.on("disconnect", () => {
-        const username = users[socket.id];
-        if (username) {
-            io.emit("chat message", { user: "System", message: `${username} has left the chat.` });
+    // Create a new server
+    socket.on("create server", (serverName) => {
+        if (!servers[serverName]) {
+            servers[serverName] = { messages: [] };
+            io.emit("server created", serverName); // Notify all users
         }
-        delete users[socket.id];
-        io.emit("update users", Object.values(users));
-        console.log(`User disconnected: ${socket.id}`);
+    });
+
+    // Join a server
+    socket.on("join server", (serverName) => {
+        socket.join(serverName);
+        socket.emit("server messages", servers[serverName]?.messages || []);
+    });
+
+    // Send message to a specific server
+    socket.on("chat message", ({ server, user, message }) => {
+        if (servers[server]) {
+            const msgData = { user, message };
+            servers[server].messages.push(msgData);
+            io.to(server).emit("chat message", msgData); // Send to users in that server
+        }
+    });
+
+    // When a user disconnects
+    socket.on("disconnect", () => {
+        console.log("A user disconnected:", socket.id);
     });
 });
 
