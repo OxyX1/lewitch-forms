@@ -3,25 +3,25 @@
     display: flex;
     flex-direction: column;
     height: 97vh;
- }
- 
- .input-container {
+}
+
+.input-container {
     display: flex;
     align-items: center;
     padding: 10px;
     background-color: #f1f1f1;
     border-bottom: 1px solid #ddd;
- }
- 
- .input-container input {
+}
+
+.input-container input {
     margin-right: 10px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 16px;
- }
- 
- .input-container button {
+}
+
+.input-container button {
     padding: 10px 15px;
     border-radius: 5px;
     border: none;
@@ -29,47 +29,47 @@
     color: white;
     font-size: 16px;
     cursor: pointer;
- }
- 
- .messages-container {
+}
+
+.messages-container {
     flex-grow: 1;
     overflow-y: auto;
     padding: 10px;
- }
- 
- .message-container {
+}
+
+.message-container {
     display: flex;
     align-items: flex-start;
     margin: 10px 0;
- }
- 
- .message-bubble {
+}
+
+.message-bubble {
     background-color: #f8f9fa;
     padding: 10px 16px;
     border-radius: 20px;
     max-width: 60%;
     word-wrap: break-word;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
- }
- 
- .sender-message-container {
+}
+
+.sender-message-container {
     justify-content: flex-end;
- }
- 
- .sender-message-bubble {
+}
+
+.sender-message-bubble {
     background-color: #007bff;
     color: white;
- }
- 
- .message-input-container {
+}
+
+.message-input-container {
     display: flex;
     align-items: center;
     padding: 10px;
     background-color: white;
     border-top: 1px solid #ddd;
- }
- 
- #messageInput {
+}
+
+#messageInput {
     flex-grow: 1;
     margin-right: 6px;
     border: none;
@@ -79,9 +79,9 @@
     font-size: 16px;
     background-color: #f8f9fa;
     padding: 10px 16px;
- }
- 
- #sendButton {
+}
+
+#sendButton {
     background-color: #007bff;
     border-radius: 20px;
     outline: none;
@@ -90,13 +90,69 @@
     color: #fff;
     font-size: 16px;
     cursor: pointer;
- }
- 
- #sendButton:hover {
+}
+
+#sendButton:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
- }
- 
- #sendButton:active {
+}
+
+#sendButton:active {
     background-color: #0056b3;
- }
- 
+}
+
+/* Settings button */
+#settingsButton {
+    margin-right: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#settingsButton:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Popup styling */
+.popup {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.popup.visible {
+    display: block;
+}
+
+.popup input {
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.popup button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.popup button:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

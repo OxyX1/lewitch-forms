@@ -21,6 +21,10 @@ document.getElementById('messageInput').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
 
+document.getElementById('settingsButton').addEventListener('click', () => {
+  toggleSettingsPopup();
+});
+
 function sendMessage() {
   const messageInput = document.getElementById('messageInput');
   const message = messageInput.value.trim();
@@ -54,11 +58,26 @@ function displayMessage(message, isSender = false) {
 }
 
 function getUser() {
-  const userNameInput = document.getElementById('userNameInput');
-  return userNameInput ? userNameInput.value : 'Anonymous';
+  return document.getElementById('popupUserNameInput').value || 'Anonymous';
 }
 
 function getServer() {
+  return document.getElementById('popupServerNameInput').value || 'default';
+}
+
+function toggleSettingsPopup() {
+  const settingsPopup = document.getElementById('settingsPopup');
+  settingsPopup.classList.toggle('visible');
+}
+
+function saveSettings() {
   const serverNameInput = document.getElementById('serverNameInput');
-  return serverNameInput ? serverNameInput.value : 'default';
+  const userNameInput = document.getElementById('userNameInput');
+  const popupServerNameInput = document.getElementById('popupServerNameInput');
+  const popupUserNameInput = document.getElementById('popupUserNameInput');
+
+  serverNameInput.value = popupServerNameInput.value;
+  userNameInput.value = popupUserNameInput.value;
+
+  toggleSettingsPopup();
 }

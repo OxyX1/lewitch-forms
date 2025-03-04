@@ -9,6 +9,7 @@
 <body>
   <div class="chat-container">
     <div class="input-container">
+      <button id="settingsButton">Settings</button>
       <input type="text" id="serverNameInput" placeholder="Server name">
       <input type="text" id="userNameInput" placeholder="Your name">
       <button onclick="createServer()">Create Server</button>
@@ -21,6 +22,12 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <div class="popup" id="settingsPopup">
+    <input type="text" id="popupServerNameInput" placeholder="Server name">
+    <input type="text" id="popupUserNameInput" placeholder="Your name">
+    <button onclick="saveSettings()">Save</button>
+  </div>
+
+  <script src="/script.js"></script>
 </body>
 </html>
