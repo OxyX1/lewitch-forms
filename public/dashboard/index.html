@@ -7,11 +7,14 @@
     <script src="https://cdn.auth0.com/js/auth0/9.19/auth0.min.js"></script>
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@main/oxy.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@3a324169cae2d1506e174dd1a96efe79fd7c9302/oxyum.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to the Oxyum dashboard</h1>
-    <p id="user-info">Checking authentication...</p>
-    <button class="logout" onclick="logout()">Logout</button>
+    <div class="chatbox"></div> <!-- this is the chatbox were it is on the right side of the screen that is the biggest div -->
+    <div class="sidebar"><button class="logout" onclick="logout()">Logout</button></div> <!-- this is the sidebar were you can add, join, and leave servers and also personal dms -->
+    <div class="topbar"><p id="user-info">Checking authentication...</p></div> <!-- top bar is were your profile is and were you can add people -->
+    <div class="chatbar"></div> <!-- this is were the chat input is, its at the bottom of the screen -->
+    
 
     <script>
         const auth0Client = new auth0.WebAuth({
