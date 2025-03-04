@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>Dashboard</title>
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@main/oxy.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/OxyX1/oxyum-css@3a324169cae2d1506e174dd1a96efe79fd7c9302/oxyum.css">
@@ -11,15 +11,14 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
         <div class="sidebar">
-            <button onclick="openServerPopup()">+ Server</button>
-            <div id="serverList" class="server-list"></div>
+            <button onclick="openServerPopup()">Create Server</button>
+            <button onclick="joinServerPopup()">Join Server</button>
+            <div id="server-info">Server ID: <span id="serverId">None</span></div>
+            <div id="account-info" onclick="openAccountPopup()">Account Info</div>
             <button class="logout" onclick="logout()">Logout</button>
-            <button onclick="showAccountInfo()">Account Info</button>
         </div>
 
-        <!-- Main Chat Area -->
         <div class="main">
             <div class="topbar">
                 <p id="user-info">Checking authentication...</p>
@@ -28,26 +27,31 @@
             <div class="chat-container">
                 <div class="chatbox" id="chatbox"></div>
                 <div class="input-area">
-                    <input type="text" id="messageInput" placeholder="Type a message...">
+                    <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
                     <button onclick="sendMessage()">Send</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Account Info Popup -->
-    <div id="account-info-popup" class="popup">
-        <p id="account-info-content"></p>
-        <button onclick="closeAccountInfo()">Close</button>
+    <!-- Server Creation Popup -->
+    <div class="popup" id="serverPopup">
+        <input type="text" id="serverName" placeholder="Enter Server Name">
+        <button onclick="createServer()">Create</button>
+        <button onclick="closePopup('serverPopup')">Close</button>
     </div>
 
-    <!-- Server Creation Popup -->
-    <div id="server-popup" class="popup">
-        <input type="text" id="serverNameInput" placeholder="Enter Server Name">
-        <button onclick="createServer()">Create</button>
-        <input type="text" id="serverIdInput" placeholder="Enter Server ID to Join">
+    <!-- Join Server Popup -->
+    <div class="popup" id="joinServerPopup">
+        <input type="text" id="serverIdInput" placeholder="Enter Server ID">
         <button onclick="joinServer()">Join</button>
-        <button onclick="closeServerPopup()">Close</button>
+        <button onclick="closePopup('joinServerPopup')">Close</button>
+    </div>
+
+    <!-- Account Info Popup -->
+    <div class="popup" id="accountPopup">
+        <p>User ID: <span id="userId">Fetching...</span></p>
+        <button onclick="closePopup('accountPopup')">Close</button>
     </div>
 
     <script src="script.js"></script>

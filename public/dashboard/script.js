@@ -1,85 +1,92 @@
-const socket = io();
+document.addEventListener("DOMContentLoaded", () => {
+    const socket = io();
+    let currentServer = null;
+    let username = localStorage.getItem("username") || "Guest";
+    let userId = localStorage.getItem("userId") || `user_${Math.floor(Math.random() * 10000)}`;
+    localStorage.setItem("userId", userId);
 
-// Check authentication & retrieve username
-let username = localStorage.getItem("username") || prompt("Enter your username:");
-if (!localStorage.getItem("username")) {
-    localStorage.setItem("username", username);
-}
-document.getElementById("user-info").textContent = `Welcome, ${username}!`;
+    document.getElementById("userId").innerText = userId;
 
-socket.emit("user join", username);
-
-// Send message function
-function sendMessage() {
-    const messageInput = document.getElementById("messageInput");
-    const message = messageInput.value.trim();
-    if (message !== "") {
-        socket.emit("chat message", { user: username, message });
-        messageInput.value = "";
+    function sendMessage() {
+        const messageInput = document.getElementById("messageInput");
+        const message = messageInput.value.trim();
+        if (message && currentServer) {
+            socket.emit("chat message", { server: currentServer, user: username, message });
+            messageInput.value = "";
+        }
     }
-}
 
-// Send message with "Enter" key
-document.getElementById("messageInput").addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        sendMessage();
+    function handleKeyPress(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
     }
+
+    function createServer() {
+        const serverName = document.getElementById("serverName").value.trim();
+        if (serverName) {
+            const serverId = `server_${Math.floor(Math.random() * 10000)}`;
+            currentServer = serverId;
+            document.getElementById("serverId").innerText = serverId;
+            socket.emit("create server", { serverId, serverName, host: userId });
+            closePopup("serverPopup");
+        }
+    }
+
+    function joinServer() {
+        const serverId = document.getElementById("serverIdInput").value.trim();
+        if (serverId) {
+            currentServer = serverId;
+            document.getElementById("serverId").innerText = serverId;
+            socket.emit("join server", { serverId, userId });
+            closePopup("joinServerPopup");
+        }
+    }
+
+    function openPopup(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closePopup(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    function openServerPopup() {
+        openPopup("serverPopup");
+    }
+
+    function joinServerPopup() {
+        openPopup("joinServerPopup");
+    }
+
+    function openAccountPopup() {
+        openPopup("accountPopup");
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "/login";
+    }
+
+    socket.on("chat message", (data) => {
+        if (data.server === currentServer) {
+            const chatbox = document.getElementById("chatbox");
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("chat-message");
+            messageElement.innerHTML = `<strong>${data.user}:</strong> ${data.message}`;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    });
+
+    document.getElementById("messageInput").addEventListener("keypress", handleKeyPress);
+
+    window.createServer = createServer;
+    window.joinServer = joinServer;
+    window.openServerPopup = openServerPopup;
+    window.joinServerPopup = joinServerPopup;
+    window.openAccountPopup = openAccountPopup;
+    window.closePopup = closePopup;
+    window.logout = logout;
+    window.sendMessage = sendMessage;
 });
-
-// Receive & display messages
-socket.on("chat message", (data) => {
-    const chatbox = document.getElementById("chatbox");
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("chat-message");
-    messageElement.textContent = `${data.user}: ${data.message}`;
-    chatbox.appendChild(messageElement);
-    chatbox.scrollTop = chatbox.scrollHeight;
-});
-
-// Account Info Popup
-function showAccountInfo() {
-    const userId = `User ID: ${socket.id}`;
-    document.getElementById("account-info-content").textContent = userId;
-    document.getElementById("account-info-popup").style.display = "block";
-}
-
-function closeAccountInfo() {
-    document.getElementById("account-info-popup").style.display = "none";
-}
-
-// Logout Function
-function logout() {
-    localStorage.removeItem("username");
-    window.location.reload();
-}
-
-// Open Server Creation Popup
-function openServerPopup() {
-    document.getElementById("server-popup").style.display = "block";
-}
-
-// Close Server Popup
-function closeServerPopup() {
-    document.getElementById("server-popup").style.display = "none";
-}
-
-// Create Server Function
-function createServer() {
-    const serverName = document.getElementById("serverNameInput").value.trim();
-    if (serverName !== "") {
-        const serverButton = document.createElement("button");
-        serverButton.classList.add("server-button");
-        serverButton.textContent = serverName;
-        document.getElementById("serverList").appendChild(serverButton);
-        closeServerPopup();
-    }
-}
-
-// Join Server with ID
-function joinServer() {
-    const serverId = document.getElementById("serverIdInput").value.trim();
-    if (serverId !== "") {
-        alert(`Joined server: ${serverId}`);
-        closeServerPopup();
-    }
-}
