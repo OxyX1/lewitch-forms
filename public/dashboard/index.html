@@ -3,60 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
-    <script src="/socket.io/socket.io.js"></script>
+    <title>Dashboard</title>
+    <script src="https://cdn.auth0.com/js/auth0/9.19/auth0.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; }
-        #chat { width: 300px; height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; }
-        input { width: 80%; padding: 5px; }
-        button { padding: 5px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 50px;
+            display: none; /* Hide content until authentication check is complete */
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout {
+            background: #dc3545;
+            color: white;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h2>Chat App</h2>
-    <div id="chat"></div>
-    <input id="message" type="text" placeholder="Type a message..." />
-    <button onclick="sendMessage()">Send</button>
 
-    <script>
-        const socket = io();
+    <h1>Welcome to the Dashboard</h1>
+    <p>You are logged in!</p>
+    <button class="logout" onclick="logout()">Logout</button>
 
-        socket.on('chat message', (msg) => {
-            const chat = document.getElementById('chat');
-            const messageElement = document.createElement('p');
-            messageElement.textContent = msg;
-            chat.appendChild(messageElement);
-            chat.scrollTop = chat.scrollHeight; // Auto-scroll to the latest message
-        });
-
-        function sendMessage() {
-            const input = document.getElementById('message');
-            const msg = input.value;
-            if (msg.trim() !== '') {
-                socket.emit('chat message', msg);
-                input.value = ''; // Clear input
-            }
-        }
-    </script>
     <script>
         const auth0Client = new auth0.WebAuth({
             domain: "dev-yvvarvk8mw7tss4s.us.auth0.com",
             clientID: "KqYsGP1tFGpW1AoZNxinyFDUPXWnzQ57",
+            redirectUri: 'http://shinkansen.proxy.rlwy.net:43606/', // Redirect to login page if not logged in
             responseType: "token id_token",
-            scope: "openid profile email",
-            redirectUri: window.location.origin
+            scope: "openid profile email"
         });
-    
+
         function checkAuth() {
             auth0Client.checkSession({}, function(err, authResult) {
                 if (err || !authResult || !authResult.idToken) {
-                    window.close();
+                    window.location.href = "http://shinkansen.proxy.rlwy.net:43606/"; // Redirect to login page
+                } else {
+                    document.body.style.display = "block"; // Show dashboard after authentication check
                 }
             });
         }
-    
+
+        function logout() {
+            auth0Client.logout({
+                returnTo: "http://shinkansen.proxy.rlwy.net:43606/", // Redirect to login page after logout
+                clientID: "KqYsGP1tFGpW1AoZNxinyFDUPXWnzQ57"
+            });
+            sessionStorage.clear();
+            localStorage.clear();
+        }
+
+        // Run authentication check when the page loads
         checkAuth();
     </script>
-    
+
 </body>
 </html>
