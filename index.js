@@ -46,23 +46,36 @@ wss.on('connection', (ws) => {
                     if (!servers[data.serverName]) {
                         servers[data.serverName] = { messages: [] };
                         broadcast(JSON.stringify({ type: 'server created', serverName: data.serverName }));
+                        console.log(`Server created: ${data.serverName}`);
                     }
                     break;
 
                 case 'join server':
                     if (servers[data.serverName]) {
                         ws.serverName = data.serverName;
-                        ws.send(JSON.stringify({ type: 'server messages', messages: servers[data.serverName].messages }));
+                        ws.send(JSON.stringify({ 
+                            type: 'server messages', 
+                            serverName: data.serverName, 
+                            messages: servers[data.serverName].messages 
+                        }));
+                        console.log(`User joined server: ${data.serverName}`);
                     } else {
                         ws.send(JSON.stringify({ type: 'error', message: 'Server does not exist' }));
                     }
                     break;
 
                 case 'chat message':
-                    if (servers[ws.serverName]) {
-                        const msgData = { user: data.user, message: data.message };
+                    if (ws.serverName && servers[ws.serverName]) {
+                        const msgData = { 
+                            type: 'chat message', 
+                            serverName: ws.serverName, 
+                            user: data.user, 
+                            message: data.message 
+                        };
+
                         servers[ws.serverName].messages.push(msgData);
-                        broadcastToServer(ws.serverName, JSON.stringify({ type: 'chat message', ...msgData }));
+                        broadcastToServer(ws.serverName, JSON.stringify(msgData));
+                        console.log(`Message sent in ${ws.serverName}: ${data.user}: ${data.message}`);
                     } else {
                         ws.send(JSON.stringify({ type: 'error', message: 'You are not in a server' }));
                     }
