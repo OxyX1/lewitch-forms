@@ -10,7 +10,6 @@
 </head>
 <body>
   <div id="app" class="app">
-
     <!-- LEFT SECTION -->
     <section id="main-left" class="main-left">
       <div id="header-left" class="header-left">
@@ -18,38 +17,47 @@
         <span class="glyphicon glyphicon-search search-btn"></span>
         <span class="glyphicon glyphicon-option-vertical option-btn"></span>
       </div>
-      <div id="chat-list" class="chat-list"></div>
+
+      <!-- User Info & Server Buttons -->
       <div id="self-info" class="self-info">
-        <h4 class="name your-name">Your Name</h4>
+        <h4 id="username-display" class="name your-name">Your Name</h4>
         <span class="glyphicon glyphicon-cog"></span>
       </div>
+
+      <div class="server-actions">
+        <button id="create-server-btn" class="btn btn-primary">Create Server</button>
+        <button id="join-server-btn" class="btn btn-secondary">Join Server</button>
+      </div>
+
+      <!-- Server List -->
+      <div id="server-list" class="server-list"></div>
+
+      <div id="chat-list" class="chat-list"></div>
     </section>
 
     <!-- RIGHT SECTION -->
     <section id="main-right" class="main-right">
       <div id="header-right" class="header-right">
         <h4 class="name friend-name">Chat</h4>
-        <div class="some-btn">
-          <span class="glyphicon glyphicon-facetime-video"></span>
-          <span class="glyphicon glyphicon-earphone"></span>
-          <span class="glyphicon glyphicon-option-vertical option-btn"></span>
-        </div>
       </div>
       <div id="chat-area" class="chat-area"></div>
       <div id="typing-area" class="typing-area">
         <input id="type-area" class="type-area" placeholder="Type something...">
-        <div class="attach-btn">
-          <span class="glyphicon glyphicon-paperclip file-btn"></span>
-          <span class="glyphicon glyphicon-camera"></span>
-          <span class="glyphicon glyphicon-picture"></span>
-        </div>
         <span class="glyphicon glyphicon-send send-btn"></span>
       </div>
     </section>
   </div>
-  <div id="creator" class="creator">
-    <p>&copy; 2025 | Chat App</p>
+
+  <!-- Server Input Modal -->
+  <div id="server-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3 id="modal-title">Enter Server Name</h3>
+      <input type="text" id="server-input" placeholder="Server Name">
+      <button id="server-submit" class="btn btn-success">Submit</button>
+    </div>
   </div>
+
   <script src="bootstrap3.3/js/jquery-3.3.1.min.js"></script>
   <script src="bootstrap3.3/js/bootstrap.min.js"></script>
   <script src="script.js"></script>
