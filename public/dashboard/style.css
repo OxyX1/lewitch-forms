@@ -1,97 +1,124 @@
 /* Apply a modern, clean font */
 body {
     font-family: 'Poppins', sans-serif;
+    color: #ffffff;
 }
 
 /* Subtle glowing text effect */
 .glow-text {
-    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.5);
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.2);
 }
 
 .container {
     display: flex;
     height: 100vh;
-    margin: 10px;
+    padding: 10px;
 }
 
+/* Sidebar Styling */
 .sidebar {
     width: 250px;
-    padding: 10px;
-    margin: 10px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-}
-
+/* Topbar Styling */
 .topbar {
     padding: 10px;
-    margin: 10px;
     text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    background: #1e1e1e;
+    border-radius: 10px;
 }
 
+/* Chat container */
 .chat-container {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: 10px;
+    background: #252525;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Chatbox */
 .chatbox {
     flex-grow: 1;
-    padding: 10px;
+    padding: 15px;
     overflow-y: auto;
-    margin: 10px;
 }
 
+/* Input Area */
 .input-area {
     display: flex;
+    align-items: center;
     padding: 10px;
-    margin: 10px;
+    background: #1e1e1e;
+    border-radius: 10px;
 }
 
+/* Input Field */
 .input-area input {
     flex-grow: 1;
-    padding: 5px;
-    margin: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #333;
+    color: white;
 }
 
-.input-area button {
-    padding: 5px 10px;
-    margin: 5px 10px;
+/* Buttons */
+button {
+    background: #ff4081;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
 }
 
+button:hover {
+    opacity: 0.8;
+}
+
+/* Server List */
 .server-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
+/* Server Buttons */
 .server-button {
-    cursor: pointer;
+    background: #444;
     padding: 10px;
-    border: none;
     border-radius: 5px;
     text-align: center;
     transition: 0.3s;
 }
 
 .server-button:hover {
-    text-decoration: underline;
+    background: #555;
     transform: scale(1.05);
 }
 
+/* Chat Messages */
 .chat-message {
+    padding: 8px;
     margin-bottom: 5px;
+    border-radius: 5px;
+    background: #333;
 }
 
-/* Popup styling */
+/* Popup Styling */
 .popup {
     display: none;
     position: fixed;
@@ -99,22 +126,23 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 20px;
-    background: rgba(0, 0, 0, 0.9);
+    background: #1a1a1a;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     z-index: 1000;
     text-align: center;
 }
 
+/* Input inside popups */
 .popup input {
     display: block;
     margin-bottom: 10px;
     width: 100%;
-}
-
-.popup button {
-    display: block;
-    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    background: #333;
+    color: white;
 }
 
 /* Invite link styling */
