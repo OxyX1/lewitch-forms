@@ -1,16 +1,11 @@
-const express = require('express');
+const WebSocket = require('ws');
 const http = require('http');
+const express = require('express');
 const path = require('path');
-const socketIo = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-});
+const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 8080;
 
@@ -29,39 +24,56 @@ app.get('*', (req, res) => {
 });
 
 const servers = {}; // Store servers and their messages
-const users = {}; // Store connected users
 
-io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
+wss.on('connection', (ws) => {
+    console.log('A user connected');
 
-    // Create a new server
-    socket.on("create server", (serverName) => {
-        if (!servers[serverName]) {
-            servers[serverName] = { messages: [] };
-            io.emit("server created", serverName); // Notify all users
+    ws.on('message', (message) => {
+        const { type, data } = JSON.parse(message);
+        
+        switch (type) {
+            case 'create server':
+                if (!servers[data.serverName]) {
+                    servers[data.serverName] = { messages: [] };
+                    broadcast(JSON.stringify({ type: 'server created', serverName: data.serverName }));
+                }
+                break;
+            
+            case 'join server':
+                ws.send(JSON.stringify({ type: 'server messages', messages: servers[data.serverName]?.messages || [] }));
+                break;
+            
+            case 'chat message':
+                if (servers[data.server]) {
+                    const msgData = { user: data.user, message: data.message };
+                    servers[data.server].messages.push(msgData);
+                    broadcastToServer(data.server, JSON.stringify({ type: 'chat message', ...msgData }));
+                }
+                break;
         }
     });
 
-    // Join a server
-    socket.on("join server", (serverName) => {
-        socket.join(serverName);
-        socket.emit("server messages", servers[serverName]?.messages || []);
-    });
-
-    // Send message to a specific server
-    socket.on("chat message", ({ server, user, message }) => {
-        if (servers[server]) {
-            const msgData = { user, message };
-            servers[server].messages.push(msgData);
-            io.to(server).emit("chat message", msgData); // Send to users in that server
-        }
-    });
-
-    // When a user disconnects
-    socket.on("disconnect", () => {
-        console.log("A user disconnected:", socket.id);
+    ws.on('close', () => {
+        console.log('A user disconnected');
     });
 });
+
+function broadcast(data) {
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(data);
+        }
+    });
+}
+
+function broadcastToServer(serverName, data) {
+    wss.clients.forEach((client) => {
+        // Assuming clients have a custom attribute `serverName` to track joined server
+        if (client.serverName === serverName && client.readyState === WebSocket.OPEN) {
+            client.send(data);
+        }
+    });
+}
 
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

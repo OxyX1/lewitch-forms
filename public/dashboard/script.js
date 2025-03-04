@@ -1,92 +1,64 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const socket = io();
-    let currentServer = null;
-    let username = localStorage.getItem("username") || "Guest";
-    let userId = localStorage.getItem("userId") || `user_${Math.floor(Math.random() * 10000)}`;
-    localStorage.setItem("userId", userId);
+const ws = new WebSocket('ws://localhost:8080'); // Ensure it matches your server port
 
-    document.getElementById("userId").innerText = userId;
+ws.onopen = () => {
+  console.log('Connected to the server');
+};
 
-    function sendMessage() {
-        const messageInput = document.getElementById("messageInput");
-        const message = messageInput.value.trim();
-        if (message && currentServer) {
-            socket.emit("chat message", { server: currentServer, user: username, message });
-            messageInput.value = "";
-        }
-    }
+ws.onmessage = (event) => {
+  const msg = JSON.parse(event.data);
+  displayMessage(msg.message, msg.user === getUser());
+};
 
-    function handleKeyPress(event) {
-        if (event.key === "Enter") {
-            sendMessage();
-        }
-    }
+ws.onclose = () => {
+  console.log('Disconnected from the server');
+};
 
-    function createServer() {
-        const serverName = document.getElementById("serverName").value.trim();
-        if (serverName) {
-            const serverId = `server_${Math.floor(Math.random() * 10000)}`;
-            currentServer = serverId;
-            document.getElementById("serverId").innerText = serverId;
-            socket.emit("create server", { serverId, serverName, host: userId });
-            closePopup("serverPopup");
-        }
-    }
-
-    function joinServer() {
-        const serverId = document.getElementById("serverIdInput").value.trim();
-        if (serverId) {
-            currentServer = serverId;
-            document.getElementById("serverId").innerText = serverId;
-            socket.emit("join server", { serverId, userId });
-            closePopup("joinServerPopup");
-        }
-    }
-
-    function openPopup(id) {
-        document.getElementById(id).style.display = "block";
-    }
-
-    function closePopup(id) {
-        document.getElementById(id).style.display = "none";
-    }
-
-    function openServerPopup() {
-        openPopup("serverPopup");
-    }
-
-    function joinServerPopup() {
-        openPopup("joinServerPopup");
-    }
-
-    function openAccountPopup() {
-        openPopup("accountPopup");
-    }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = "/login";
-    }
-
-    socket.on("chat message", (data) => {
-        if (data.server === currentServer) {
-            const chatbox = document.getElementById("chatbox");
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("chat-message");
-            messageElement.innerHTML = `<strong>${data.user}:</strong> ${data.message}`;
-            chatbox.appendChild(messageElement);
-            chatbox.scrollTop = chatbox.scrollHeight;
-        }
-    });
-
-    document.getElementById("messageInput").addEventListener("keypress", handleKeyPress);
-
-    window.createServer = createServer;
-    window.joinServer = joinServer;
-    window.openServerPopup = openServerPopup;
-    window.joinServerPopup = joinServerPopup;
-    window.openAccountPopup = openAccountPopup;
-    window.closePopup = closePopup;
-    window.logout = logout;
-    window.sendMessage = sendMessage;
+document.getElementById('sendButton').addEventListener('click', () => {
+  sendMessage();
 });
+
+document.getElementById('messageInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+function sendMessage() {
+  const messageInput = document.getElementById('messageInput');
+  const message = messageInput.value.trim();
+  if (message) {
+    const user = getUser();
+    const server = getServer();
+    ws.send(JSON.stringify({ type: 'chat message', data: { user, server, message } }));
+    displayMessage(message, true);
+    messageInput.value = '';
+  }
+}
+
+function displayMessage(message, isSender = false) {
+  const messagesDiv = document.getElementById('messages');
+  const messageContainer = document.createElement('div');
+  const messageElement = document.createElement('div');
+  
+  messageElement.textContent = message;
+  messageContainer.classList.add('message-container');
+  
+  if (isSender) {
+    messageContainer.classList.add('sender-message-container');
+    messageElement.classList.add('message-bubble', 'sender-message-bubble');
+  } else {
+    messageElement.classList.add('message-bubble');
+  }
+  
+  messageContainer.appendChild(messageElement);
+  messagesDiv.appendChild(messageContainer);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function getUser() {
+  const userNameInput = document.getElementById('userNameInput');
+  return userNameInput ? userNameInput.value : 'Anonymous';
+}
+
+function getServer() {
+  const serverNameInput = document.getElementById('serverNameInput');
+  return serverNameInput ? serverNameInput.value : 'default';
+}
