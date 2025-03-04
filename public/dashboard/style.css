@@ -43,17 +43,6 @@ body {
     margin: 10px;
 }
 
-/* Chatbox - Main Chat Area */
-.chatbox {
-    position: absolute;
-    top: 100px; /* Adjusted for topbar height + margin */
-    left: 280px; /* Matches topbar */
-    right: 20px; /* Matches topbar */
-    bottom: 100px; /* Adjusted for chatbar height + margin */
-    overflow-y: auto;
-    margin: 10px;
-}
-
 /* Chatbar - Input Area */
 .chatbar {
     position: fixed;
@@ -63,6 +52,18 @@ body {
     height: 80px;
     display: flex;
     align-items: center;
+    margin: 10px; /* Keeps consistent spacing */
+    padding: 10px;
+}
+
+/* Chatbox - Main Chat Area */
+.chatbox {
+    position: absolute;
+    top: 100px; /* Adjusted for topbar height + margin */
+    left: 280px; /* Matches topbar */
+    right: 20px; /* Matches topbar */
+    bottom: 120px; /* Creates space between chatbox and chatbar */
+    overflow-y: auto;
     margin: 10px;
-    margin-top: 10px;
+    padding: 10px;
 }
