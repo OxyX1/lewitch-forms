@@ -1,110 +1,69 @@
-const socket = new WebSocket('ws://localhost:8080');
-
-const chatList = document.getElementById('chat-list');
-const chatArea = document.getElementById('chat-area');
-const typeArea = document.getElementById('type-area');
-const sendBtn = document.querySelector('.send-btn');
-const serverContainer = document.getElementById('chat-list');
-
+const socket = new WebSocket("ws://localhost:3000");
 let currentServer = null;
-let username = prompt("Enter your username:") || "User" + Math.floor(Math.random() * 1000);
 
-// Send user identification to the server
-socket.addEventListener('open', () => {
-    socket.send(JSON.stringify({ type: 'set user', data: { userID: username } }));
+// Elements
+const serverList = document.getElementById("server-list");
+const serverModal = document.getElementById("server-modal");
+const serverNameInput = document.getElementById("server-name-input");
+const serverSubmit = document.getElementById("server-submit");
+const closeModal = document.querySelector(".close");
+const chatMessages = document.getElementById("chat-messages");
+const messageInput = document.getElementById("message-input");
+const sendBtn = document.getElementById("send-btn");
+const serverTitle = document.getElementById("server-title");
+
+// Open modal for server creation
+document.getElementById("create-server-btn").addEventListener("click", () => {
+  serverModal.style.display = "block";
+});
+
+// Close modal
+closeModal.addEventListener("click", () => {
+  serverModal.style.display = "none";
+});
+
+// Create a server
+serverSubmit.addEventListener("click", () => {
+  const serverName = serverNameInput.value.trim();
+  if (serverName) {
+    socket.send(JSON.stringify({ type: "create-server", name: serverName }));
+    serverModal.style.display = "none";
+    serverNameInput.value = "";
+  }
+});
+
+// Select a server
+function joinServer(serverId, serverName) {
+  currentServer = serverId;
+  serverTitle.textContent = serverName;
+  chatMessages.innerHTML = "";
+  socket.send(JSON.stringify({ type: "join-server", serverId }));
+}
+
+// Send message
+sendBtn.addEventListener("click", () => {
+  const message = messageInput.value.trim();
+  if (message && currentServer) {
+    socket.send(JSON.stringify({ type: "message", serverId: currentServer, content: message }));
+    messageInput.value = "";
+  }
 });
 
 // Handle incoming messages
-socket.addEventListener('message', (event) => {
-    const data = JSON.parse(event.data);
+socket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
 
-    switch (data.type) {
-        case 'server created':
-            addServerButton(data.serverName);
-            break;
-
-        case 'server messages':
-            loadChatHistory(data.serverName, data.messages);
-            break;
-
-        case 'chat message':
-            if (data.serverName === currentServer) {
-                displayMessage(data.user, data.message);
-            }
-            break;
-
-        case 'error':
-            alert(data.message);
-            break;
-    }
-});
-
-// Function to create a new server
-function createServer() {
-    const serverName = prompt("Enter a server name:");
-    if (serverName) {
-        socket.send(JSON.stringify({ type: 'create server', data: { serverName } }));
-        addServerButton(serverName);
-    }
-}
-
-// Function to join a server
-function joinServer(serverName) {
-    currentServer = serverName;
-    socket.send(JSON.stringify({ type: 'join server', data: { serverName } }));
-}
-
-// Function to send a message
-sendBtn.addEventListener('click', () => {
-    sendMessage();
-});
-
-typeArea.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        sendMessage();
-    }
-});
-
-function sendMessage() {
-    const message = typeArea.value.trim();
-    if (message && currentServer) {
-        socket.send(JSON.stringify({ type: 'chat message', data: { user: username, message } }));
-        typeArea.value = '';
-    }
-}
-
-// Function to display a message in the chat area
-function displayMessage(user, message) {
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message');
-    messageDiv.innerHTML = `<strong>${user}:</strong> ${message}`;
-    chatArea.appendChild(messageDiv);
-    chatArea.scrollTop = chatArea.scrollHeight;
-}
-
-// Function to load chat history when joining a server
-function loadChatHistory(serverName, messages) {
-    chatArea.innerHTML = `<h3>Server: ${serverName}</h3>`;
-    messages.forEach(msg => {
-        displayMessage(msg.user, msg.message);
+  if (data.type === "server-list") {
+    serverList.innerHTML = "";
+    data.servers.forEach((server) => {
+      const btn = document.createElement("button");
+      btn.textContent = server.name;
+      btn.addEventListener("click", () => joinServer(server.id, server.name));
+      serverList.appendChild(btn);
     });
-}
-
-// Function to add a server button to the UI
-function addServerButton(serverName) {
-    if (!document.getElementById(`server-${serverName}`)) {
-        const serverBtn = document.createElement('button');
-        serverBtn.id = `server-${serverName}`;
-        serverBtn.classList.add('server-btn');
-        serverBtn.textContent = serverName;
-        serverBtn.addEventListener('click', () => joinServer(serverName));
-        serverContainer.appendChild(serverBtn);
-    }
-}
-
-// Add "Create Server" button to UI
-const createServerBtn = document.createElement('button');
-createServerBtn.textContent = "Create Server";
-createServerBtn.classList.add('create-server-btn');
-createServerBtn.addEventListener('click', createServer);
-serverContainer.appendChild(createServerBtn);
+  } else if (data.type === "message" && data.serverId === currentServer) {
+    const msgDiv = document.createElement("div");
+    msgDiv.textContent = `${data.sender}: ${data.content}`;
+    chatMessages.appendChild(msgDiv);
+  }
+};

@@ -1,106 +1,93 @@
-const WebSocket = require('ws');
-const http = require('http');
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const WebSocket = require("ws");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 const server = http.createServer(app);
+const io = new Server(server);
 const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 8080;
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
 
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login', 'index.html'));
+app.get("/login", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "login", "index.html"));
 });
 
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
+app.get("/dashboard", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "dashboard", "index.html"));
 });
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-const servers = {}; // Store servers and messages
-const users = new Map(); // Store connected users (userID -> WebSocket)
+const servers = {}; // { serverId: { name, users, messages } }
+const users = new Map(); // userID -> WebSocket
 
-// Handle WebSocket connections
-wss.on('connection', (ws) => {
-    console.log('A user connected');
+// WebSocket Handling
+wss.on("connection", (ws) => {
+    console.log("A user connected via WebSocket");
     ws.userID = null;
     ws.serverName = null;
 
-    ws.on('message', (message) => {
+    ws.on("message", (message) => {
         try {
             const { type, data } = JSON.parse(message);
-
             switch (type) {
-                case 'set user':
+                case "set user":
                     ws.userID = data.userID;
                     users.set(data.userID, ws);
                     break;
-
-                case 'create server':
+                case "create server":
                     if (!servers[data.serverName]) {
                         servers[data.serverName] = { messages: [] };
-                        broadcast(JSON.stringify({ type: 'server created', serverName: data.serverName }));
-                        console.log(`Server created: ${data.serverName}`);
+                        broadcast(JSON.stringify({ type: "server created", serverName: data.serverName }));
                     }
                     break;
-
-                case 'join server':
+                case "join server":
                     if (servers[data.serverName]) {
                         ws.serverName = data.serverName;
-                        ws.send(JSON.stringify({ 
-                            type: 'server messages', 
-                            serverName: data.serverName, 
-                            messages: servers[data.serverName].messages 
+                        ws.send(JSON.stringify({
+                            type: "server messages",
+                            serverName: data.serverName,
+                            messages: servers[data.serverName].messages
                         }));
-                        console.log(`User joined server: ${data.serverName}`);
                     } else {
-                        ws.send(JSON.stringify({ type: 'error', message: 'Server does not exist' }));
+                        ws.send(JSON.stringify({ type: "error", message: "Server does not exist" }));
                     }
                     break;
-
-                case 'chat message':
+                case "chat message":
                     if (ws.serverName && servers[ws.serverName]) {
-                        const msgData = { 
-                            type: 'chat message', 
-                            serverName: ws.serverName, 
-                            user: data.user, 
-                            message: data.message 
+                        const msgData = {
+                            type: "chat message",
+                            serverName: ws.serverName,
+                            user: data.user,
+                            message: data.message
                         };
-
                         servers[ws.serverName].messages.push(msgData);
                         broadcastToServer(ws.serverName, JSON.stringify(msgData));
-                        console.log(`Message sent in ${ws.serverName}: ${data.user}: ${data.message}`);
-                    } else {
-                        ws.send(JSON.stringify({ type: 'error', message: 'You are not in a server' }));
                     }
                     break;
-
-                case 'direct message':
+                case "direct message":
                     if (users.has(data.toUserID)) {
-                        const recipient = users.get(data.toUserID);
-                        recipient.send(JSON.stringify({ type: 'direct message', from: data.fromUserID, message: data.message }));
-                    } else {
-                        ws.send(JSON.stringify({ type: 'error', message: 'User not found' }));
+                        users.get(data.toUserID).send(JSON.stringify({ type: "direct message", from: data.fromUserID, message: data.message }));
                     }
                     break;
-
                 default:
-                    ws.send(JSON.stringify({ type: 'error', message: 'Unknown request type' }));
+                    ws.send(JSON.stringify({ type: "error", message: "Unknown request type" }));
             }
         } catch (err) {
-            console.error('Invalid message format:', err);
-            ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));
+            ws.send(JSON.stringify({ type: "error", message: "Invalid message format" }));
         }
     });
 
-    ws.on('close', () => {
-        console.log('A user disconnected');
+    ws.on("close", () => {
         if (ws.userID) users.delete(ws.userID);
     });
 });

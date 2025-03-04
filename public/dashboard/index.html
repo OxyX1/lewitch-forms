@@ -8,36 +8,32 @@
 </head>
 <body>
   <div class="app">
-    <!-- LEFT SIDEBAR -->
+    <!-- Sidebar for servers -->
     <div class="sidebar">
       <h3 id="username-display">Your Name</h3>
       <button id="create-server-btn">Create Server</button>
-      <button id="join-server-btn">Join Server</button>
       <div id="server-list"></div>
     </div>
 
-    <!-- CHAT SECTION -->
+    <!-- Chat section -->
     <div class="chat-container">
       <h3 id="server-title">Select a Server</h3>
-      <div id="chat-area"></div>
-      <div class="message-input">
-        <input id="message-box" type="text" placeholder="Type a message...">
-        <button id="send-btn">Send</button>
-      </div>
+      <div id="chat-messages"></div>
+      <input id="message-input" type="text" placeholder="Type a message...">
+      <button id="send-btn">Send</button>
     </div>
   </div>
 
-  <!-- MODAL POPUP -->
+  <!-- Server creation modal -->
   <div id="server-modal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h3 id="modal-title">Enter Server Name</h3>
-      <input type="text" id="server-input">
-      <button id="server-submit">Submit</button>
+      <h3>Enter Server Name</h3>
+      <input type="text" id="server-name-input" placeholder="Server Name">
+      <button id="server-submit">Create</button>
     </div>
   </div>
 
   <script src="script.js"></script>
-  <script src="0Auth.js"></script>
 </body>
 </html>
