@@ -23,38 +23,72 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const servers = {}; // Store servers and their messages
+const servers = {}; // Store servers and messages
+const users = new Map(); // Store connected users (userID -> WebSocket)
 
+// Handle WebSocket connections
 wss.on('connection', (ws) => {
     console.log('A user connected');
+    ws.userID = null;
+    ws.serverName = null;
 
     ws.on('message', (message) => {
-        const { type, data } = JSON.parse(message);
-        
-        switch (type) {
-            case 'create server':
-                if (!servers[data.serverName]) {
-                    servers[data.serverName] = { messages: [] };
-                    broadcast(JSON.stringify({ type: 'server created', serverName: data.serverName }));
-                }
-                break;
-            
-            case 'join server':
-                ws.send(JSON.stringify({ type: 'server messages', messages: servers[data.serverName]?.messages || [] }));
-                break;
-            
-            case 'chat message':
-                if (servers[data.server]) {
-                    const msgData = { user: data.user, message: data.message };
-                    servers[data.server].messages.push(msgData);
-                    broadcastToServer(data.server, JSON.stringify({ type: 'chat message', ...msgData }));
-                }
-                break;
+        try {
+            const { type, data } = JSON.parse(message);
+
+            switch (type) {
+                case 'set user':
+                    ws.userID = data.userID;
+                    users.set(data.userID, ws);
+                    break;
+
+                case 'create server':
+                    if (!servers[data.serverName]) {
+                        servers[data.serverName] = { messages: [] };
+                        broadcast(JSON.stringify({ type: 'server created', serverName: data.serverName }));
+                    }
+                    break;
+
+                case 'join server':
+                    if (servers[data.serverName]) {
+                        ws.serverName = data.serverName;
+                        ws.send(JSON.stringify({ type: 'server messages', messages: servers[data.serverName].messages }));
+                    } else {
+                        ws.send(JSON.stringify({ type: 'error', message: 'Server does not exist' }));
+                    }
+                    break;
+
+                case 'chat message':
+                    if (servers[ws.serverName]) {
+                        const msgData = { user: data.user, message: data.message };
+                        servers[ws.serverName].messages.push(msgData);
+                        broadcastToServer(ws.serverName, JSON.stringify({ type: 'chat message', ...msgData }));
+                    } else {
+                        ws.send(JSON.stringify({ type: 'error', message: 'You are not in a server' }));
+                    }
+                    break;
+
+                case 'direct message':
+                    if (users.has(data.toUserID)) {
+                        const recipient = users.get(data.toUserID);
+                        recipient.send(JSON.stringify({ type: 'direct message', from: data.fromUserID, message: data.message }));
+                    } else {
+                        ws.send(JSON.stringify({ type: 'error', message: 'User not found' }));
+                    }
+                    break;
+
+                default:
+                    ws.send(JSON.stringify({ type: 'error', message: 'Unknown request type' }));
+            }
+        } catch (err) {
+            console.error('Invalid message format:', err);
+            ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));
         }
     });
 
     ws.on('close', () => {
         console.log('A user disconnected');
+        if (ws.userID) users.delete(ws.userID);
     });
 });
 
@@ -68,7 +102,6 @@ function broadcast(data) {
 
 function broadcastToServer(serverName, data) {
     wss.clients.forEach((client) => {
-        // Assuming clients have a custom attribute `serverName` to track joined server
         if (client.serverName === serverName && client.readyState === WebSocket.OPEN) {
             client.send(data);
         }

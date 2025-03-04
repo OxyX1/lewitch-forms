@@ -1,83 +1,50 @@
-const ws = new WebSocket('ws://localhost:8080'); // Ensure it matches your server port
+const ws = new WebSocket('ws://localhost:8080');
 
-ws.onopen = () => {
-  console.log('Connected to the server');
-};
+let currentUserID = prompt("Enter your username:");
+ws.send(JSON.stringify({ type: 'set user', data: { userID: currentUserID } }));
 
 ws.onmessage = (event) => {
-  const msg = JSON.parse(event.data);
-  displayMessage(msg.message, msg.user === getUser());
+    const msg = JSON.parse(event.data);
+
+    switch (msg.type) {
+        case 'server created':
+            console.log(`Server "${msg.serverName}" created.`);
+            break;
+
+        case 'server messages':
+            console.log(`Messages in server:`, msg.messages);
+            break;
+
+        case 'chat message':
+            console.log(`[${msg.user}]: ${msg.message}`);
+            break;
+
+        case 'direct message':
+            console.log(`[DM from ${msg.from}]: ${msg.message}`);
+            break;
+
+        case 'error':
+            console.error(`Error: ${msg.message}`);
+            break;
+    }
 };
 
-ws.onclose = () => {
-  console.log('Disconnected from the server');
-};
-
-document.getElementById('sendButton').addEventListener('click', () => {
-  sendMessage();
-});
-
-document.getElementById('messageInput').addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') sendMessage();
-});
-
-document.getElementById('settingsButton').addEventListener('click', () => {
-  toggleSettingsPopup();
-});
-
-function sendMessage() {
-  const messageInput = document.getElementById('messageInput');
-  const message = messageInput.value.trim();
-  if (message) {
-    const user = getUser();
-    const server = getServer();
-    ws.send(JSON.stringify({ type: 'chat message', data: { user, server, message } }));
-    displayMessage(message, true);
-    messageInput.value = '';
-  }
+// Create a server
+function createServer(serverName) {
+    ws.send(JSON.stringify({ type: 'create server', data: { serverName } }));
 }
 
-function displayMessage(message, isSender = false) {
-  const messagesDiv = document.getElementById('messages');
-  const messageContainer = document.createElement('div');
-  const messageElement = document.createElement('div');
-  
-  messageElement.textContent = message;
-  messageContainer.classList.add('message-container');
-  
-  if (isSender) {
-    messageContainer.classList.add('sender-message-container');
-    messageElement.classList.add('message-bubble', 'sender-message-bubble');
-  } else {
-    messageElement.classList.add('message-bubble');
-  }
-  
-  messageContainer.appendChild(messageElement);
-  messagesDiv.appendChild(messageContainer);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+// Join a server
+function joinServer(serverName) {
+    ws.send(JSON.stringify({ type: 'join server', data: { serverName } }));
 }
 
-function getUser() {
-  return document.getElementById('popupUserNameInput').value || 'Anonymous';
+// Send a message in a server
+function sendMessage(serverName, message) {
+    ws.send(JSON.stringify({ type: 'chat message', data: { user: currentUserID, server: serverName, message } }));
 }
 
-function getServer() {
-  return document.getElementById('popupServerNameInput').value || 'default';
-}
-
-function toggleSettingsPopup() {
-  const settingsPopup = document.getElementById('settingsPopup');
-  settingsPopup.classList.toggle('visible');
-}
-
-function saveSettings() {
-  const serverNameInput = document.getElementById('serverNameInput');
-  const userNameInput = document.getElementById('userNameInput');
-  const popupServerNameInput = document.getElementById('popupServerNameInput');
-  const popupUserNameInput = document.getElementById('popupUserNameInput');
-
-  serverNameInput.value = popupServerNameInput.value;
-  userNameInput.value = popupUserNameInput.value;
-
-  toggleSettingsPopup();
+// Send a direct message
+function sendDirectMessage(toUserID, message) {
+    ws.send(JSON.stringify({ type: 'direct message', data: { fromUserID: currentUserID, toUserID, message } }));
 }
