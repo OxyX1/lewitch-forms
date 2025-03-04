@@ -9,12 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("username", username);
     socket.emit("user join", username);
 
-    // Send message on button click
-    sendBtn.addEventListener("click", () => {
-        sendMessage();
-    });
+    // Send message when clicking the button
+    sendBtn.addEventListener("click", sendMessage);
 
-    // Send message on Enter key press
+    // Send message when pressing Enter
     chatInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") sendMessage();
     });
@@ -22,12 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function sendMessage() {
         const message = chatInput.value.trim();
         if (message !== "") {
-            socket.emit("chat message", message);
-            chatInput.value = ""; // Clear input field
+            socket.emit("chat message", { user: username, message });
+            chatInput.value = ""; // Clear input
         }
     }
 
-    // Receive messages and display them
+    // Receive messages
     socket.on("chat message", (data) => {
         const msgElement = document.createElement("p");
         msgElement.innerHTML = `<strong>${data.user}:</strong> ${data.message}`;

@@ -30,21 +30,22 @@ app.get('*', (req, res) => {
 
 const users = {}; // Store connected users
 
-io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.id}`);
+io.on("connection", (socket) => {
+    console.log("A user connected:", socket.id);
 
-    // When a new user joins
-    socket.on('user join', (username) => {
-        users[socket.id] = username;
-        io.emit('chat message', { user: 'System', message: `${username} has joined the chat!` });
-        io.emit('update users', Object.values(users)); // Send updated user list
+    socket.on("user join", (username) => {
+        console.log(`${username} joined the chat`);
     });
 
-    // Receiving and broadcasting messages
-    socket.on('chat message', (msg) => {
-        const user = users[socket.id] || 'Anonymous';
-        io.emit('chat message', { user, message: msg });
+    socket.on("chat message", (data) => {
+        io.emit("chat message", data); // Broadcast message
     });
+
+    socket.on("disconnect", () => {
+        console.log("A user disconnected:", socket.id);
+    });
+});
+
 
     // When a user disconnects
     socket.on('disconnect', () => {
