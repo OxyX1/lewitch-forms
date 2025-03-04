@@ -10,21 +10,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <input type="text" id="serverName" placeholder="Create a server">
-        <button onclick="createServer()">Create</button>
-        <ul id="serverList"></ul>
-        <button class="logout" onclick="logout()">Logout</button>
+    <div class="container">
+        <div class="sidebar">
+            <input type="text" id="serverName" placeholder="Create a server">
+            <button onclick="createServer()">Create</button>
+            <ul id="serverList"></ul>
+            <button class="logout" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="main">
+            <div class="topbar">
+                <p id="user-info">Checking authentication...</p>
+            </div>
+
+            <div class="chat-container">
+                <div class="chatbox" id="chatbox"></div>
+                <div class="input-area">
+                    <input type="text" id="messageInput" placeholder="Type a message...">
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="topbar">
-        <p id="user-info">Checking authentication...</p>
-    </div>
-
-    <div class="chatbox" id="chatbox"></div>
-
-    <input type="text" id="messageInput" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
 
     <script src="script.js"></script>
 </body>

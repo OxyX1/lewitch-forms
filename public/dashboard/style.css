@@ -1,85 +1,58 @@
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+.container {
     display: flex;
-    flex-direction: column;
     height: 100vh;
-    overflow: hidden;
 }
 
-/* Sidebar - Left side */
 .sidebar {
-    width: 240px;
-    height: calc(100vh - 40px); /* Leaves space at the top and bottom */
-    position: fixed;
-    left: 20px; /* Space from the left */
-    top: 20px; /* Space from the top */
+    width: 250px;
+    padding: 10px;
+}
+
+.main {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 10px;
 }
 
-/* Logout Button */
-.logout {
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    margin-top: auto;
-    width: 80%;
-    border-radius: 5px;
-}
-
-/* Topbar - Top of screen */
 .topbar {
-    position: fixed;
-    top: 20px; /* Space from the top */
-    left: 280px; /* Adjusted for sidebar width + margin */
-    right: 20px; /* Space from the right */
-    height: 60px;
-    display: flex;
-    align-items: center;
-    margin: 10px;
-}
-
-/* Chatbox Styling */
-.chatbox {
-    position: fixed;
-    bottom: 20px;
-    left: 280px;
-    right: 20px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    background: #f1f1f1;
     padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Input Field */
-#chat-input {
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.chatbox {
     flex-grow: 1;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-right: 10px;
+    overflow-y: auto;
 }
 
-/* Send Button */
-#send-btn {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 5px;
+.input-area {
+    display: flex;
+    padding: 10px;
+}
+
+.input-area input {
+    flex-grow: 1;
+    padding: 5px;
+}
+
+.input-area button {
+    padding: 5px 10px;
+}
+
+.server-item {
     cursor: pointer;
-    transition: 0.2s;
+    padding: 5px;
 }
 
-#send-btn:hover {
-    background: #0056b3;
+.server-item:hover {
+    text-decoration: underline;
+}
+
+.chat-message {
+    margin-bottom: 5px;
 }

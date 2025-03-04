@@ -13,6 +13,7 @@ socket.on("server created", (serverName) => {
     const serverList = document.getElementById("serverList");
     const li = document.createElement("li");
     li.textContent = serverName;
+    li.classList.add("server-item");
     li.onclick = () => joinServer(serverName);
     serverList.appendChild(li);
 });
@@ -44,5 +45,7 @@ function addMessage(user, message) {
     const chatbox = document.getElementById("chatbox");
     const msgDiv = document.createElement("div");
     msgDiv.textContent = `${user}: ${message}`;
+    msgDiv.classList.add("chat-message");
     chatbox.appendChild(msgDiv);
+    chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll to latest message
 }
