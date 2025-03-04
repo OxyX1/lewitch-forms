@@ -66,4 +66,5 @@ body {
     overflow-y: auto;
     margin: 10px;
     padding: 10px;
+    gap: 10px;
 }
